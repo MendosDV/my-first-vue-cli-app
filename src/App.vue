@@ -5,7 +5,57 @@ export default {
   name: 'App',
   components: {
     NavLink
-  }
+  },
+  data() {
+      return {
+        address: "1200 rue Beaubien, Montréal, Canada",
+        email: "chloe@cafeboo.bakery",
+        phone: "(438) 543 - 6842",
+        restaurantName: "Chez Chloé ☕️",
+        shoppingCart: 0,
+        simpleMenu: [
+          {
+            name: "Croissant",
+            image: {
+              source: require("@/assets/images/croissant.jpg"),
+              alt: "Un croissant"
+            },
+            inStock: true,
+            quantity: 1
+          },
+          {
+            name: "Baguette de pain",
+            image: {
+              source: require("@/assets/images/french-baguette.jpeg"),
+              alt: "Quatre baguettes de pain"
+            },
+            inStock: true,
+            quantity: 1
+          },
+          {
+            name: "Éclair",
+            image: {
+              source: require("@/assets/images/eclair.jpg"),
+              alt: "Éclair au chocolat"
+            },
+            inStock: false,
+            quantity: 1
+          }
+        ]
+      }
+    },
+    computed: {
+      copyright() {
+        const currentYear = new Date().getFullYear()
+
+        return `Copyright ${this.restaurantName} ${currentYear}`
+      }
+    },
+    methods: {
+      addToShoppingCart(amount) {
+        this.shoppingCart += amount
+      }
+    }
 }
 </script>
 
@@ -15,6 +65,62 @@ export default {
     <NavLink url="/about" text="À propos" />
     <NavLink url="/contact" text="Contact" />
   </nav>
+  <div id="app" class="app">
+    <h1>{{ restaurantName }}</h1>
+    <p class="description">
+      Bienvenue dans notre café {{ restaurantName }}! Nous sommes réputés pour
+      notre pain et nos merveilleuses pâtisseries. Faites vous plaisir dès le
+      matin ou avec un goûter réconfortant. Mais attention, vous verrez qu'il
+      est difficile de s'arrêter.
+    </p>
+
+    <section class="menu">
+      <h2>Menu</h2>
+      <div v-for="item in simpleMenu" :key="item.name" class="menu-item">
+        <img
+          class="menu-item__image"
+          :src="item.image.source"
+          :alt="item.image.alt"
+        />
+        <div>
+          <h3>{{ item.name }}</h3>
+          <p v-if="item.inStock">En stock</p>
+          <p v-else>En rupture de stock</p>
+          <div>
+            <label for="add-item-quantity"
+              >Quantité : {{ item.quantity }}</label
+            >
+            <input
+              v-model.number="item.quantity"
+              id="add-item-quantity"
+              type="number"
+            />
+            <button @click="addToShoppingCart(item.quantity)">
+              Ajouter au panier d'achat
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="shopping-cart">
+      <h2>Panier d'achat : {{ shoppingCart }} articles</h2>
+    </aside>
+
+    <h2>Contactez nous</h2>
+    <p>Adresse : {{ address }}</p>
+    <p>Téléphone : {{ phone }}</p>
+    <p>Email : {{ email }}</p>
+    <p>Horaires :</p>
+    <ul class="no-bullets">
+      <li>L-V: 06:00 à 16:00</li>
+      <li>Samedi: 07:00 à 14:00</li>
+      <li>Dimanche: 07:00 à 12:00</li>
+    </ul>
+    <footer class="footer">
+      <p>{{ copyright }}</p>
+    </footer>
+  </div>
 </template>
 
 <style lang="scss">
@@ -32,5 +138,52 @@ nav {
   align-items: center;
   justify-content: center;
   gap: 1em;
+}
+
+.app {
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+}
+
+.description {
+  max-width: 960px;
+  font-size: 1.2rem;
+  margin: 0 auto;
+}
+
+.footer {
+  text-align: center;
+  font-style: italic;
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.menu-item {
+  display: flex;
+  width: 500px;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+
+.menu-item__image {
+  max-width: 300px;
+}
+
+.shopping-cart {
+  position: absolute;
+  right: 30px;
+  top: 0;
+}
+
+.no-bullets {
+  list-style-type: none;
 }
 </style>
